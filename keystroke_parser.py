@@ -8,6 +8,7 @@ def get_keystroke_features_dataframe(user_df, data_directory="dataset/Archived D
     def create_features_for_user(user_key, data_directory):
         hold_times = []
         latency_times = []
+        flight_times = []
 
         for filename in os.listdir(data_directory):
             if filename.endswith('.txt') and filename.startswith(user_key):
@@ -32,6 +33,7 @@ def get_keystroke_features_dataframe(user_df, data_directory="dataset/Archived D
 
                     hold_times.extend(temp_df['Hold Time'].dropna().tolist())
                     latency_times.extend(temp_df['Latency Time'].dropna().tolist())
+                    flight_times.extend(temp_df['Flight Time'].dropna().tolist())
                 except Exception as e:
                     print(f"Error {e}")
                     continue
@@ -42,8 +44,12 @@ def get_keystroke_features_dataframe(user_df, data_directory="dataset/Archived D
             'UserKey': user_key,
             'mean_hold': pd.Series(hold_times).mean(),
             'std_hold': pd.Series(hold_times).std(),
+            'median_hold': pd.Series(hold_times).median(),
             'mean_latency': pd.Series(latency_times).mean(),
             'std_latency': pd.Series(latency_times).std(),
+            'median_latency': pd.Series(latency_times).median(),
+            'mean_flight': pd.Series(flight_times).mean() if flight_times else 0,
+            'std_flight': pd.Series(flight_times).std() if flight_times else 0,
             'keystroke_count': len(hold_times)
         }
         
